@@ -22,7 +22,7 @@ public class Client {
 				continue;
 		
 			//Query for number of client requests to spin up
-			
+			int numRequests = getNumRequests();
 			//Construct x number of threads
 		
 			//Construct timer
@@ -43,20 +43,13 @@ public class Client {
 			try {
 				return new Socket(getAddress(), getPort());
 			} catch(Exception e) {
-				System.out.print("Unable to create the requested socket.");
+				System.out.println("Unable to create the requested socket.");
+				e.printStackTrace();
 				
-				while(true) {
-					System.out.print("Try again? Y/N\n");
-					
-					switch(scanner.nextLine()) {
-						case "y" :
-						case "Y" : break;
-						
-						case "n" :
-						case "N" : System.exit(0);
-						default : continue;
-					}//end switch
-				}//end while
+				System.out.println("To try again, enter a key. To quit, type \"exit\".");
+				scanner.nextLine();
+				if(scanner.nextLine().toLowerCase().equals("exit"))
+					System.exit(0);
 			}//end try-catch
 			
 		}//end while
@@ -66,18 +59,18 @@ public class Client {
 	/** Fetches the network address of the server to connect to from the user. 
 	 * @return The InetAddress of the requested server */
 	private static InetAddress getAddress() {
+		System.out.println("Enter the address of the server you wish to connect to:");
 		
 		while(true)
 			try {
-				System.out.println("Enter the address of the server you wish to connect to:");
 				InetAddress requestedAddress = InetAddress.getByName(scanner.nextLine());
 				
-				if(requestedAddress.isLoopbackAddress())
-					throw new UnknownHostException("Address is Loopback.");
+//				if(requestedAddress.isLoopbackAddress())
+//					throw new UnknownHostException("Address is Loopback.");
 				
 				return requestedAddress; 
 			} catch(UnknownHostException uhe) {
-				System.out.println("The address entered is invalid. Please try again.\n");
+				System.out.println("The address entered is invalid. Please try again:");
 			}//end try-catch
 		
 	}//end method getAddress
@@ -85,15 +78,14 @@ public class Client {
 	/** Fetches the port number of the server to connect to from the user. 
 	 * @return The port for the requested server */
 	private static int getPort() {
+		System.out.println("Enter the port number of the server you wish to connect to:");
 		
 		while(true)
 			try {
-				System.out.println("Enter the port number of the server you wish to connect to:");
-				int serverPort = scanner.nextInt();
-				
-				return serverPort;
+				return scanner.nextInt();
 			} catch(InputMismatchException ime) {
-				System.out.println("The port entered is invalid. Please try again.\n");
+				System.out.println("The port entered is invalid. Please try again:");
+				scanner.nextLine();
 			}//end try-catch
 		
 	}//end method getPort
@@ -116,11 +108,13 @@ public class Client {
 				
 				return commandID;
 			} catch(InputMismatchException | IllegalArgumentException e) {
-				System.out.println("The command ID entered is invalid. Please try again.\n");
-			} finally {
-				System.out.println("Enter the ID of the command you wish to run:");
-			}//end try-catch-finally
+				System.out.println("The command ID entered is invalid. Please try again:");
+			}//end try-catch
 		
 	}//end method getCommand
+	
+	private static int getNumRequests() {
+		return 0;
+	}//end method getNumRequests
 
 }//end class Client
