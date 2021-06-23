@@ -11,29 +11,38 @@ public class Client {
 	
 	public static void main(String[] args) {
 		Socket clientSocket = constructSocket();
-		int commandID = Command.QUIT.getID(); //Default: Quit
 		
-		//While fetched command is not 'quit', 
-		do {
-			commandID = getCommand();
+		int numRequests;
+		Command command;
+		CommandThread[] commandThreads;
+		 
+		while(true) {
+			command = getCommand();
+			//If user quit, exit.
+			if(command == Command.QUIT)
+				break;
+		
+			numRequests = getNumRequests();
 			
-			//If user quit, skip everything else
-			if(commandID == Command.QUIT.getID())
-				continue;
+			//Construct the threads
+			commandThreads = new CommandThread[numRequests];
+			for(int i = 0; i < numRequests; ++i)
+				commandThreads[i] = new CommandThread((command + " thread " + i), command.getCommand(), clientSocket);
+			
+			//Record time, launch threads and print results, record elapsed time
+			long initialTime = System.currentTimeMillis();
+			for(CommandThread thread : commandThreads)
+				thread.start();
+			
+			for(CommandThread thread : commandThreads)
+				System.out.print(thread.getCommandResults());
+			long elapsedTime = System.currentTimeMillis() - initialTime;
+			
+			System.out.println("Total elapsed time: " + elapsedTime + " ms.");
+			System.out.println("Average time per thread: " + ((double)elapsedTime / numRequests) + "ms.");
+		}//end while
 		
-			//Query for number of client requests to spin up
-			int numRequests = getNumRequests();
-			//Construct x number of threads
-		
-			//Construct timer
-		
-			//Start timer and launch threads
-		
-			//After last result, record/pause timer
-		
-			//Calculate and print average time for thread completion
-		} while(commandID != -1);
-		
+		System.out.println("Closing client.");
 		scanner.close();
 	}//end method main
 	
@@ -90,10 +99,10 @@ public class Client {
 		
 	}//end method getPort
 	
-	/** Fetches the command ID of the requested command to be run on the server. 
+	/** Fetches the requested command to be run on the server from the user. 
 	 * If the user desires to quit instead, returns -1
 	 * @return The ID for the requested command */
-	private static int getCommand() {
+	private static Command getCommand() {
 		System.out.println("Enter the ID of the command you wish to run.");
 		System.out.println("Valid commands:");
 		for(Command c : Command.values())
@@ -103,10 +112,11 @@ public class Client {
 			try {
 				int commandID = scanner.nextInt();
 				
-				if(commandID < Command.QUIT.getID() || commandID > Command.values().length - 2)
-					throw new IllegalArgumentException("Requested command ID does not exist.");
+				for(Command c : Command.values())
+					if(c.getID() == commandID)
+						return c;
 				
-				return commandID;
+				throw new IllegalArgumentException("Requested command ID does not exist.");
 			} catch(InputMismatchException | IllegalArgumentException e) {
 				System.out.println("The command ID entered is invalid. Please try again:");
 			}//end try-catch
