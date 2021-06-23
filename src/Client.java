@@ -1,25 +1,28 @@
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Client {
 	
 	private static Scanner scanner = new Scanner(System.in);
-
+	
 	public static void main(String[] args) {
 		Socket clientSocket = constructSocket();
-		
+		int commandID = Command.QUIT.getID(); //Default: Quit
 		
 		//While fetched command is not 'quit', 
-//		do {
-			//Print list of options (commands + quit)
+		do {
+			commandID = getCommand();
 			
-			//Query for command
+			//If user quit, skip everything else
+			if(commandID == Command.QUIT.getID())
+				continue;
 		
 			//Query for number of client requests to spin up
-		
+			
 			//Construct x number of threads
 		
 			//Construct timer
@@ -29,7 +32,7 @@ public class Client {
 			//After last result, record/pause timer
 		
 			//Calculate and print average time for thread completion
-//		} while(commandID != -1);
+		} while(commandID != -1);
 		
 		scanner.close();
 	}//end method main
@@ -94,5 +97,30 @@ public class Client {
 			}//end try-catch
 		
 	}//end method getPort
+	
+	/** Fetches the command ID of the requested command to be run on the server. 
+	 * If the user desires to quit instead, returns -1
+	 * @return The ID for the requested command */
+	private static int getCommand() {
+		System.out.println("Enter the ID of the command you wish to run.");
+		System.out.println("Valid commands:");
+		for(Command c : Command.values())
+			System.out.println("\t" + c.getName() + " | ID: " + c.getID());
+		
+		while(true)
+			try {
+				int commandID = scanner.nextInt();
+				
+				if(commandID < Command.QUIT.getID() || commandID > Command.values().length - 2)
+					throw new IllegalArgumentException("Requested command ID does not exist.");
+				
+				return commandID;
+			} catch(InputMismatchException | IllegalArgumentException e) {
+				System.out.println("The command ID entered is invalid. Please try again.\n");
+			} finally {
+				System.out.println("Enter the ID of the command you wish to run:");
+			}//end try-catch-finally
+		
+	}//end method getCommand
 
 }//end class Client
