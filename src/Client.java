@@ -1,7 +1,6 @@
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -46,6 +45,9 @@ public class Client {
 		scanner.close();
 	}//end method main
 	
+	/**Constructs a valid client Socket, connected to the SocketServer at a requested IP address and port number.
+	 * @return The Socket constructed from the requested port and address, if connection is successful.
+	 */
 	private static Socket constructSocket() {
 		while(true) {
 			
@@ -66,7 +68,7 @@ public class Client {
 	}//end method constructSocket
 
 	/** Fetches the network address of the server to connect to from the user. 
-	 * @return The InetAddress of the requested server */
+	 * @return The InetAddress of the requested server. */
 	private static InetAddress getAddress() {
 		System.out.println("Enter the address of the server you wish to connect to:");
 		
@@ -74,8 +76,8 @@ public class Client {
 			try {
 				InetAddress requestedAddress = InetAddress.getByName(scanner.nextLine());
 				
-//				if(requestedAddress.isLoopbackAddress())
-//					throw new UnknownHostException("Address is Loopback.");
+				if(requestedAddress.isLoopbackAddress())
+					throw new UnknownHostException("Address is Loopback.");
 				
 				return requestedAddress; 
 			} catch(UnknownHostException uhe) {
@@ -85,7 +87,7 @@ public class Client {
 	}//end method getAddress
 	
 	/** Fetches the port number of the server to connect to from the user. 
-	 * @return The port for the requested server */
+	 * @return The port for the requested server. */
 	private static int getPort() {
 		System.out.println("Enter the port number of the server you wish to connect to:");
 		
@@ -100,8 +102,8 @@ public class Client {
 	}//end method getPort
 	
 	/** Fetches the requested command to be run on the server from the user. 
-	 * If the user desires to quit instead, returns -1
-	 * @return The ID for the requested command */
+	 * If the user desires to quit instead, returns -1.
+	 * @return The ID for the requested command. */
 	private static Command getCommand() {
 		System.out.println("Enter the ID of the command you wish to run.");
 		System.out.println("Valid commands:");
@@ -119,12 +121,26 @@ public class Client {
 				throw new IllegalArgumentException("Requested command ID does not exist.");
 			} catch(InputMismatchException | IllegalArgumentException e) {
 				System.out.println("The command ID entered is invalid. Please try again:");
+				scanner.nextLine();
 			}//end try-catch
 		
 	}//end method getCommand
 	
+	/** Fetches the number of requests to the server to make. 
+	 * Suggests to the user options of 1, 5, 10, 15, 20, and 25.
+	 * @return The number of requests desired. */
 	private static int getNumRequests() {
-		return 0;
+		System.out.println("Enter the number of requests to the server you want to make:");
+		System.out.println("Suggested options: 1, 5, 10, 15, 20, 25");
+		
+		while(true)
+			try {
+				return scanner.nextInt();
+			} catch(InputMismatchException ime) {
+				System.out.println("The number of requests entered is invalid. Please try again:");
+				scanner.nextLine();
+			}//end try-catch
+		
 	}//end method getNumRequests
 
 }//end class Client
