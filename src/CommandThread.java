@@ -10,16 +10,16 @@ import java.net.Socket;
 public class CommandThread extends Thread {
 
 	private Socket connectedClient;
-	private int command;
+	private Command command;
 	private String results = "";
 	
 	/**Creates a new command-running thread with the specified name.
-	 * Sends the supplied command to the server connected with the supplied socket.
+	 * Sends the ID of the supplied command to the server connected with the supplied socket.
 	 * @param name The name of the thread.
 	 * @param command The command to be run.
 	 * @param client The socket to output the command to.
 	 */
-	public CommandThread(String name, int command, Socket client) {
+	public CommandThread(String name, Command command, Socket client) {
 		super(name);
 		this.command = command;
 		this.connectedClient = client;
@@ -30,7 +30,7 @@ public class CommandThread extends Thread {
 	public void run() {
 		
 		try {
-			new PrintWriter(connectedClient.getOutputStream(), true).println(command);
+			new PrintWriter(connectedClient.getOutputStream(), true).println(command.getID());
 			BufferedReader outputReader = new BufferedReader( new InputStreamReader(connectedClient.getInputStream()) );
 			
 			String outputLine;

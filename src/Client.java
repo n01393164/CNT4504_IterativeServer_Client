@@ -26,7 +26,7 @@ public class Client {
 			//Construct the threads
 			commandThreads = new CommandThread[numRequests];
 			for(int i = 0; i < numRequests; ++i)
-				commandThreads[i] = new CommandThread((command + " thread " + i), command.getID(), clientSocket);
+				commandThreads[i] = new CommandThread((command + " thread " + i), command, clientSocket);
 			
 			//Record time, launch threads and print results, record elapsed time
 			long initialTime = System.currentTimeMillis();
