@@ -1,10 +1,9 @@
-
 /**Enumeration of all available commands to send to the server.
  * @author Douglas Tanner (N01393164)
  */
 public enum Command {
 	QUIT(-1, null, "Quit"),
-	DATE_AND_TIME(0, "free", "Date and Time"), 
+	DATE_AND_TIME(0, "date", "Date and Time"), 
 	UPTIME(1, "uptime", "Uptime"), 
 	MEMORY_USAGE(2, "free", "Memory Usage"), 
 	NETSTAT(3, "netstat", "Netstat"), 

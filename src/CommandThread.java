@@ -10,7 +10,7 @@ import java.net.Socket;
 public class CommandThread extends Thread {
 
 	private Socket connectedClient;
-	private String command = "";
+	private int command;
 	private String results = "";
 	
 	/**Creates a new command-running thread with the specified name.
@@ -19,7 +19,7 @@ public class CommandThread extends Thread {
 	 * @param command The command to be run.
 	 * @param client The socket to output the command to.
 	 */
-	public CommandThread(String name, String command, Socket client) {
+	public CommandThread(String name, int command, Socket client) {
 		super(name);
 		this.command = command;
 		this.connectedClient = client;
