@@ -1,5 +1,4 @@
 import java.net.InetAddress;
-import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -9,8 +8,8 @@ public class Client {
 	private static Scanner scanner = new Scanner(System.in);
 	
 	public static void main(String[] args) {
-		Socket clientSocket = constructSocket();
-		
+		InetAddress serverAddress = getAddress();
+		int serverPort = getPort();
 		int numRequests;
 		Command command;
 		CommandThread[] commandThreads;
@@ -26,7 +25,7 @@ public class Client {
 			//Construct the threads
 			commandThreads = new CommandThread[numRequests];
 			for(int i = 0; i < numRequests; ++i)
-				commandThreads[i] = new CommandThread((command + " thread " + i), command, clientSocket);
+				commandThreads[i] = new CommandThread((command + " " + i), command, serverAddress, serverPort);
 			
 			//Record time, launch threads and print results, record elapsed time
 			long initialTime = System.currentTimeMillis();
@@ -41,32 +40,9 @@ public class Client {
 			System.out.println("Average time per thread: " + ((double)elapsedTime / numRequests) + "ms.");
 		}//end while
 		
-		System.out.println("Closing client.");
 		scanner.close();
 	}//end method main
 	
-	/**Constructs a valid client Socket, connected to the SocketServer at a requested IP address and port number.
-	 * @return The Socket constructed from the requested port and address, if connection is successful.
-	 */
-	private static Socket constructSocket() {
-		while(true) {
-			
-			try {
-				return new Socket(getAddress(), getPort());
-			} catch(Exception e) {
-				System.out.println("Unable to create the requested socket.");
-				e.printStackTrace();
-				
-				System.out.println("To try again, enter a key. To quit, type \"exit\".");
-				scanner.nextLine();
-				if(scanner.nextLine().toLowerCase().equals("exit"))
-					System.exit(0);
-			}//end try-catch
-			
-		}//end while
-		
-	}//end method constructSocket
-
 	/** Fetches the network address of the server to connect to from the user. 
 	 * @return The InetAddress of the requested server. */
 	private static InetAddress getAddress() {

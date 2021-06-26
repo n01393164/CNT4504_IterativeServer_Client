@@ -1,7 +1,9 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.Socket;
 
 /**Thread for sending the supplied command to the server at the other end of the supplied socket, and storing the incoming results.
@@ -9,8 +11,9 @@ import java.net.Socket;
  */
 public class CommandThread extends Thread {
 
-	private Socket connectedClient;
 	private Command command;
+	private InetAddress address;
+	private int port;
 	private String results = "";
 	
 	/**Creates a new command-running thread with the specified name.
@@ -19,24 +22,30 @@ public class CommandThread extends Thread {
 	 * @param command The command to be run.
 	 * @param client The socket to output the command to.
 	 */
-	public CommandThread(String name, Command command, Socket client) {
+	public CommandThread(String name, Command command, InetAddress address, int port) {
 		super(name);
 		this.command = command;
-		this.connectedClient = client;
+		this.address = address;
+		this.port = port;
 	}//end constructor method
 	
 	/**Sends the thread's command to the output stream of the client socket, and stores the results from the socket's input stream. */
 	@Override
 	public void run() {
 		
-		try {
-			new PrintWriter(connectedClient.getOutputStream(), true).println(command.getID());
-			BufferedReader outputReader = new BufferedReader( new InputStreamReader(connectedClient.getInputStream()) );
+		try (Socket client = new Socket(this.address, this.port)) {
+			OutputStream outputToServer = client.getOutputStream();
+			PrintWriter writeToServer = new PrintWriter(outputToServer, true);
+			
+			writeToServer.println(this.command.getID());
+			
+			BufferedReader outputReader = new BufferedReader( new InputStreamReader(client.getInputStream()) );	
 			
 			String outputLine;
 			while((outputLine = outputReader.readLine()) != null)
 				this.results += (outputLine + "\n");
 			
+			client.close();
 		} catch (IOException ioe) {
 			System.err.println("I/O Exception occurred during thread " + this.getName());
 			ioe.printStackTrace();
