@@ -2,6 +2,7 @@
  * @author Douglas Tanner (N01393164)
  */
 public enum Command {
+	SHUTDOWN(-2, "Shutdown"),
 	QUIT(-1, "Quit"),
 	DATE_AND_TIME(0, "Date and Time"), 
 	UPTIME(1, "Uptime"), 

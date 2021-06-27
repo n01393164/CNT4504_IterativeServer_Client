@@ -41,20 +41,32 @@ public class Client {
 					System.out.println("Could not rejoin thread");
 					e.printStackTrace();
 				}
-				System.out.print(thread.getCommandResults());//Print Thread Results
-				System.out.println("Turn Around Time: " + thread.getTurnAroundTime()); //Show the correct turn Around Time
-				totalTurnAroundTime += thread.getTurnAroundTime();	//Get the totalTurnAroudnTime
+				System.out.print(thread.getCommandResults());							//Print Thread Results
+				System.out.println("Turn Around Time: " + thread.getTurnAroundTime());	//Show the correct turn Around Time
+				totalTurnAroundTime += thread.getTurnAroundTime();						//Get the totalTurnAroudnTime
 				}
-			long elapsedTime = System.currentTimeMillis() - initialTime;
+			//long elapsedTime = System.currentTimeMillis() - initialTime;
 			
 			
-			System.out.println("Total elapsed time: " + elapsedTime + " ms.");
-			System.out.println("Average time per thread: " + ((double)elapsedTime / numRequests) + "ms.");
+			//System.out.println("Total elapsed time: " + elapsedTime + " ms.");
+			//System.out.println("Average time per thread: " + ((double)elapsedTime / numRequests) + "ms.");
 			
 			System.out.println("Total Turn Around Time: " + totalTurnAroundTime);
 			System.out.println("Average Turn Around Time: " + (totalTurnAroundTime / numRequests) + "ms.");
 		}//end while
 		
+		//Shutdown Server from client
+		System.out.println("Shutdown Server? (y/n)");
+		if (scanner.next() == "y") {
+			CommandThread shutdown = new CommandThread("SHUTDOWN", Command.SHUTDOWN, serverAddress, serverPort);
+			shutdown.start();
+			try {
+				shutdown.join();
+			} catch (InterruptedException e) {
+				System.out.println("Could not rejoin thread");
+				e.printStackTrace();
+			}
+		}	
 		scanner.close();
 	}//end method main
 	
@@ -99,7 +111,8 @@ public class Client {
 		System.out.println("Enter the ID of the command you wish to run.");
 		System.out.println("Valid commands:");
 		for(Command c : Command.values())
-			System.out.println("\t" + c.getName() + " | ID: " + c.getID());
+			//System.out.println("\t" + c.getName() + " | ID: " + c.getID());
+			System.out.printf("\t %-17s | ID: %d\n", c.getName(), c.getID());
 		
 		while(true)
 			try {
