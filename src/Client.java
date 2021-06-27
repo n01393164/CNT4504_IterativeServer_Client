@@ -11,6 +11,7 @@ public class Client {
 		InetAddress serverAddress = getAddress();
 		int serverPort = getPort();
 		int numRequests;
+		double totalTurnAroundTime = 0;
 		Command command;
 		CommandThread[] commandThreads;
 		 
@@ -32,12 +33,26 @@ public class Client {
 			for(CommandThread thread : commandThreads)
 				thread.start();
 			
-			for(CommandThread thread : commandThreads)
-				System.out.print(thread.getCommandResults());
+			totalTurnAroundTime = 0;						//make sure the totalTurnAroundTime is 0
+			for(CommandThread thread : commandThreads) {
+				try {
+					thread.join();							//end the threads
+				} catch (InterruptedException e) {
+					System.out.println("Could not rejoin thread");
+					e.printStackTrace();
+				}
+				System.out.print(thread.getCommandResults());//Print Thread Results
+				System.out.println("Turn Around Time: " + thread.getTurnAroundTime()); //Show the correct turn Around Time
+				totalTurnAroundTime += thread.getTurnAroundTime();	//Get the totalTurnAroudnTime
+				}
 			long elapsedTime = System.currentTimeMillis() - initialTime;
+			
 			
 			System.out.println("Total elapsed time: " + elapsedTime + " ms.");
 			System.out.println("Average time per thread: " + ((double)elapsedTime / numRequests) + "ms.");
+			
+			System.out.println("Total Turn Around Time: " + totalTurnAroundTime);
+			System.out.println("Average Turn Around Time: " + (totalTurnAroundTime / numRequests) + "ms.");
 		}//end while
 		
 		scanner.close();
