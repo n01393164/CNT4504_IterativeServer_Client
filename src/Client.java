@@ -29,7 +29,7 @@ public class Client {
 				commandThreads[i] = new CommandThread((command + " " + i), command, serverAddress, serverPort);
 			
 			//Record time, launch threads and print results, record elapsed time
-			long initialTime = System.currentTimeMillis();
+			//long initialTime = System.currentTimeMillis();
 			for(CommandThread thread : commandThreads)
 				thread.start();
 			
@@ -42,17 +42,12 @@ public class Client {
 					e.printStackTrace();
 				}
 				System.out.print(thread.getCommandResults());							//Print Thread Results
-				System.out.println("Turn Around Time: " + thread.getTurnAroundTime());	//Show the correct turn Around Time
+				System.out.println("[test] Turn Around Time: " + thread.getTurnAroundTime() + " ms.");	//Show the correct turn Around Time
 				totalTurnAroundTime += thread.getTurnAroundTime();						//Get the totalTurnAroudnTime
 				}
-			//long elapsedTime = System.currentTimeMillis() - initialTime;
-			
-			
-			//System.out.println("Total elapsed time: " + elapsedTime + " ms.");
-			//System.out.println("Average time per thread: " + ((double)elapsedTime / numRequests) + "ms.");
 			
 			System.out.println("Total Turn Around Time: " + totalTurnAroundTime);
-			System.out.println("Average Turn Around Time: " + (totalTurnAroundTime / numRequests) + "ms.");
+			System.out.println("Average Turn Around Time: " + (totalTurnAroundTime / numRequests) + " ms.");
 		}//end while
 		
 		//Shutdown Server from client
@@ -113,7 +108,7 @@ public class Client {
 		for(Command c : Command.values())
 			//System.out.println("\t" + c.getName() + " | ID: " + c.getID());
 			System.out.printf("\t %-17s | ID: %d\n", c.getName(), c.getID());
-		
+		System.out.printf("\n");
 		while(true)
 			try {
 				int commandID = scanner.nextInt();
