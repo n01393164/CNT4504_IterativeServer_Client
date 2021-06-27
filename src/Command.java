@@ -1,7 +1,8 @@
 /**Enumeration of all available commands to send to the server.
- * @author Douglas Tanner (N01393164)
+ * @author Douglas Tanner (N01393164), William Hiromoto (N01452026)
  */
 public enum Command {
+	SHUTDOWN(-2, "Shutdown"),
 	QUIT(-1, "Quit"),
 	DATE_AND_TIME(0, "Date and Time"), 
 	UPTIME(1, "Uptime"), 

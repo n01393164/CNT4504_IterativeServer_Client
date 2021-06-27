@@ -7,7 +7,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 /**Thread for sending the supplied command to the server at the other end of the supplied socket, and storing the incoming results.
- * @author Douglas Tanner (N01393164)
+ * @author Douglas Tanner (N01393164), William Hiromoto (N01452026)
  */
 public class CommandThread extends Thread {
 
@@ -15,7 +15,10 @@ public class CommandThread extends Thread {
 	private InetAddress address;
 	private int port;
 	private String results = "";
+	private double initalTime;
+	private double turnAroundTime;
 	
+
 	/**Creates a new command-running thread with the specified name.
 	 * Sends the ID of the supplied command to the server connected with the supplied socket.
 	 * @param name The name of the thread.
@@ -35,6 +38,8 @@ public class CommandThread extends Thread {
 		
 		try (Socket client = new Socket(this.address, this.port)) {
 			OutputStream outputToServer = client.getOutputStream();
+			initalTime = System.currentTimeMillis();				//Turn around time starts now
+			
 			PrintWriter writeToServer = new PrintWriter(outputToServer, true);
 			
 			writeToServer.println(this.command.getID());
@@ -42,10 +47,12 @@ public class CommandThread extends Thread {
 			BufferedReader outputReader = new BufferedReader( new InputStreamReader(client.getInputStream()) );	
 			
 			String outputLine;
-			while((outputLine = outputReader.readLine()) != null)
+			while((outputLine = outputReader.readLine()) != null)		//Combine all output from server
 				this.results += (outputLine + "\n");
 			
 			client.close();
+			turnAroundTime = System.currentTimeMillis() - initalTime;	//finish calculating turn around time
+			
 		} catch (IOException ioe) {
 			System.err.println("I/O Exception occurred during thread " + this.getName());
 			ioe.printStackTrace();
@@ -59,5 +66,9 @@ public class CommandThread extends Thread {
 	public String getCommandResults() {
 		return this.results;
 	}//end method getCommandResults
+	
+	public double getTurnAroundTime() {
+		return turnAroundTime;
+	}//end method getTurnAroundTime
 	
 }//end class CommandThread

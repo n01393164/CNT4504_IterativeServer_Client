@@ -3,6 +3,9 @@ import java.net.UnknownHostException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+/**Client program for CNT4504 Iterative Socket Server assignment
+ * @author Douglas Tanner (N0139164), William Hiromoto (N01452026)
+ */
 public class Client {
 	
 	private static Scanner scanner = new Scanner(System.in);
@@ -11,6 +14,7 @@ public class Client {
 		InetAddress serverAddress = getAddress();
 		int serverPort = getPort();
 		int numRequests;
+		double totalTurnAroundTime = 0;
 		Command command;
 		CommandThread[] commandThreads;
 		 
@@ -28,18 +32,39 @@ public class Client {
 				commandThreads[i] = new CommandThread((command + " " + i), command, serverAddress, serverPort);
 			
 			//Record time, launch threads and print results, record elapsed time
-			long initialTime = System.currentTimeMillis();
+			//long initialTime = System.currentTimeMillis();
 			for(CommandThread thread : commandThreads)
 				thread.start();
 			
-			for(CommandThread thread : commandThreads)
-				System.out.print(thread.getCommandResults());
-			long elapsedTime = System.currentTimeMillis() - initialTime;
+			totalTurnAroundTime = 0;						//make sure the totalTurnAroundTime is 0
+			for(CommandThread thread : commandThreads) {
+				try {
+					thread.join();							//end the threads
+				} catch (InterruptedException e) {
+					System.out.println("Could not rejoin thread");
+					e.printStackTrace();
+				}
+				System.out.print(thread.getCommandResults());							//Print Thread Results
+				System.out.println("[test] Turn Around Time: " + thread.getTurnAroundTime() + " ms.");	//Show the correct turn Around Time
+				totalTurnAroundTime += thread.getTurnAroundTime();						//Get the totalTurnAroudnTime
+				}
 			
-			System.out.println("Total elapsed time: " + elapsedTime + " ms.");
-			System.out.println("Average time per thread: " + ((double)elapsedTime / numRequests) + "ms.");
+			System.out.println("Total Turn Around Time: " + totalTurnAroundTime);
+			System.out.println("Average Turn Around Time: " + (totalTurnAroundTime / numRequests) + " ms.");
 		}//end while
 		
+		//Shutdown Server from client
+		System.out.println("Shutdown Server? (y/n)");
+		if (scanner.next() == "y") {
+			CommandThread shutdown = new CommandThread("SHUTDOWN", Command.SHUTDOWN, serverAddress, serverPort);
+			shutdown.start();
+			try {
+				shutdown.join();
+			} catch (InterruptedException e) {
+				System.out.println("Could not rejoin thread");
+				e.printStackTrace();
+			}
+		}	
 		scanner.close();
 	}//end method main
 	
@@ -84,8 +109,9 @@ public class Client {
 		System.out.println("Enter the ID of the command you wish to run.");
 		System.out.println("Valid commands:");
 		for(Command c : Command.values())
-			System.out.println("\t" + c.getName() + " | ID: " + c.getID());
-		
+			//System.out.println("\t" + c.getName() + " | ID: " + c.getID());
+			System.out.printf("\t %-17s | ID: %d\n", c.getName(), c.getID());
+		System.out.printf("\n");
 		while(true)
 			try {
 				int commandID = scanner.nextInt();
