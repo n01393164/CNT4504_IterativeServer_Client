@@ -24,12 +24,14 @@ public class Client {
 			//If user quit, exit.
 			if(command == Command.QUIT)
 				break;
-			else if(command == Command.TESTINGRUNS)
+			else if(command == Command.TESTINGRUNS) {
 				try {
 					testingPhase(serverAddress, serverPort);
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
+				}
+				break;
 				}
 		
 			numRequests = getNumRequests();
@@ -163,6 +165,7 @@ public class Client {
 		
 		//run through commands
 		for (int k = 3; k < 9; k++) {
+			System.out.println("Testing: " + commands[k].getName());
 			//create headers for command
 			pen.write(commands[k].name() + "\nRun, ");
 			for (int i = 1; i <= 100; i++) {
@@ -172,8 +175,8 @@ public class Client {
 			
 			//run through testing runs
 			for (int i = 0; i < testingRuns.length; i++) {
-				pen.write(i + ", "); 		//write the row name
-				switch(testingRuns[i]) { 	//repeat runs x amount of times per value
+				pen.write(testingRuns[i] + ", "); 	//write the row name
+				switch(testingRuns[i]) { 			//repeat runs x amount of times per value
 				case 1:
 					for (int j = 0; j < 100; j++) {
 						threadMachine(serverAddress, serverPort, commands[k], testingRuns[i], pen);
@@ -186,6 +189,11 @@ public class Client {
 					break;
 				case 10:
 					for (int j = 0; j < 10; j++) {
+						threadMachine(serverAddress, serverPort, commands[k], testingRuns[i], pen);
+					}
+					break;
+				case 15:
+					for (int j = 0; j < 6; j++) {
 						threadMachine(serverAddress, serverPort, commands[k], testingRuns[i], pen);
 					}
 					break;
