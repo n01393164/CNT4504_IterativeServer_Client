@@ -165,7 +165,7 @@ public class Client {
 		
 		//run through commands
 		for (int k = 3; k < 9; k++) {
-			System.out.println("Testing: " + commands[k].getName());
+			System.out.println("Testing: " + commands[k].getName() + "\n");
 			//create headers for command
 			pen.write(commands[k].name() + "\nRun, ");
 			for (int i = 1; i <= 100; i++) {
@@ -198,19 +198,23 @@ public class Client {
 					}
 					break;
 				case 20:
+					if (k == 8) System.out.println("starting 20 repeats");
 					for (int j = 0; j < 5; j++) {
 						threadMachine(serverAddress, serverPort, commands[k], testingRuns[i], pen);
 					}
 					break;
 				case 25:
+					if (k == 8) System.out.println("starting 25 repeats");
 					for (int j = 0; j < 4; j++) {
 						threadMachine(serverAddress, serverPort, commands[k], testingRuns[i], pen);
 					}
 					break;
 				case 100:
+					if (i == 8) System.out.println("starting 100 repeats");
 						threadMachine(serverAddress, serverPort, commands[k], testingRuns[i], pen);
 					break;
 				}//end switch
+				System.out.println("Done");
 				pen.write("Done\n");
 			}//end for loop
 			pen.write("Done\n");
@@ -232,6 +236,7 @@ public class Client {
 			thread.start();
 		
 		//totalTurnAroundTime = 0;						//make sure the totalTurnAroundTime is 0
+		int i = 0;
 		for(CommandThread thread : commandThreads) {
 			try {
 				thread.join();							//end the threads
@@ -239,12 +244,16 @@ public class Client {
 				System.out.println("Could not rejoin thread");
 				e.printStackTrace();
 			}
-			pen.write(thread.getTurnAroundTime() + ", ");							//Write turn around time to file
 			
 			//System.out.print(thread.getCommandResults());							//Print Thread Results
 			//System.out.println("[test] Turn Around Time: " + thread.getTurnAroundTime() + " ms.");	//Show the correct turn Around Time
-			//totalTurnAroundTime += thread.getTurnAroundTime();						//Get the totalTurnAroudnTime
+			//totalTurnAroundTime += thread.getTurnAroundTime();					//Get the totalTurnAroudnTime
 			}
+		for (CommandThread thread : commandThreads) {
+			pen.write(thread.getTurnAroundTime() + ", ");							//Write turn around time to file
+			System.out.printf(".");
+			i++;
+		}
 		//pen.write(totalTurnAroundTime);
 		//System.out.println("Total Turn Around Time: " + totalTurnAroundTime);
 		//System.out.println("Average Turn Around Time: " + (totalTurnAroundTime / numThread) + " ms.");
