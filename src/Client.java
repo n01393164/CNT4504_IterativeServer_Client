@@ -3,6 +3,9 @@ import java.net.UnknownHostException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+/**Client program for CNT4504 Iterative Socket Server assignment
+ * @author Douglas Tanner (N0139164), William Hiromoto (N01452026)
+ */
 public class Client {
 	
 	private static Scanner scanner = new Scanner(System.in);

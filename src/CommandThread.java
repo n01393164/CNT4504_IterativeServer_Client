@@ -7,7 +7,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 /**Thread for sending the supplied command to the server at the other end of the supplied socket, and storing the incoming results.
- * @author Douglas Tanner (N01393164)
+ * @author Douglas Tanner (N01393164), William Hiromoto (N01452026)
  */
 public class CommandThread extends Thread {
 
@@ -69,6 +69,6 @@ public class CommandThread extends Thread {
 	
 	public double getTurnAroundTime() {
 		return turnAroundTime;
-	}
+	}//end method getTurnAroundTime
 	
 }//end class CommandThread
