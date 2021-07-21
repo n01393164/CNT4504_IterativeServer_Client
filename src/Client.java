@@ -133,7 +133,7 @@ public class Client {
 	 * @return The number of requests desired. */
 	private static int getNumRequests() {
 		System.out.println("Enter the number of requests to the server you want to make:");
-		System.out.println("Suggested options: 1, 5, 10, 15, 20, 25");
+		System.out.println("Suggested options: 1, 5, 10, 15, 20, 25, 100");
 		
 		while(true)
 			try {
