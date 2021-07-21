@@ -2,6 +2,7 @@
  * @author Douglas Tanner (N01393164), William Hiromoto (N01452026)
  */
 public enum Command {
+	TESTINGRUNS(-3, "Test Mode"),
 	SHUTDOWN(-2, "Shutdown"),
 	QUIT(-1, "Quit"),
 	DATE_AND_TIME(0, "Date and Time"), 

@@ -2,6 +2,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.io.*;
 
 /**Client program for CNT4504 Iterative Socket Server assignment
  * @author Douglas Tanner (N0139164), William Hiromoto (N01452026)
@@ -23,6 +24,13 @@ public class Client {
 			//If user quit, exit.
 			if(command == Command.QUIT)
 				break;
+			else if(command == Command.TESTINGRUNS)
+				try {
+					testingPhase(serverAddress, serverPort);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 		
 			numRequests = getNumRequests();
 			
@@ -144,5 +152,94 @@ public class Client {
 			}//end try-catch
 		
 	}//end method getNumRequests
+	
+	private static void testingPhase(InetAddress serverAddress, int serverPort) throws IOException {
+		//modified parts
+		int[] testingRuns = {1, 5, 10, 15, 20, 25, 100};
+		Command[] commands = Command.values();
+				
+		File output = new File("Results.csv");
+		FileWriter pen = new FileWriter("Results.csv");
+		
+		//run through commands
+		for (int k = 3; k < 9; k++) {
+			//create headers for command
+			pen.write(commands[k].name() + "\nRun, ");
+			for (int i = 1; i <= 100; i++) {
+				pen.write(i + ", ");
+			}
+			pen.write("Total, Average\n");
+			
+			//run through testing runs
+			for (int i = 0; i < testingRuns.length; i++) {
+				pen.write(i + ", "); 		//write the row name
+				switch(testingRuns[i]) { 	//repeat runs x amount of times per value
+				case 1:
+					for (int j = 0; j < 100; j++) {
+						threadMachine(serverAddress, serverPort, commands[k], testingRuns[i], pen);
+					}
+					break;
+				case 5:
+					for (int j = 0; j < 20; j++) {
+						threadMachine(serverAddress, serverPort, commands[k], testingRuns[i], pen);
+					}
+					break;
+				case 10:
+					for (int j = 0; j < 10; j++) {
+						threadMachine(serverAddress, serverPort, commands[k], testingRuns[i], pen);
+					}
+					break;
+				case 20:
+					for (int j = 0; j < 5; j++) {
+						threadMachine(serverAddress, serverPort, commands[k], testingRuns[i], pen);
+					}
+					break;
+				case 25:
+					for (int j = 0; j < 4; j++) {
+						threadMachine(serverAddress, serverPort, commands[k], testingRuns[i], pen);
+					}
+					break;
+				case 100:
+						threadMachine(serverAddress, serverPort, commands[k], testingRuns[i], pen);
+					break;
+				}//end switch
+				pen.write("Done\n");
+			}//end for loop
+			pen.write("Done\n");
+		}//end for loop		
+	}//end testingPhase()
+	private static void threadMachine(InetAddress serverAddress, int serverPort, Command command, int numThread, FileWriter pen) throws IOException {
+		//from original
+		CommandThread[] commandThreads;
+		//double totalTurnAroundTime = 0;
+		
+		//Construct the threads
+		commandThreads = new CommandThread[numThread];
+		for(int j = 0; j < numThread; ++j)
+			commandThreads[j] = new CommandThread((command + " " + j), command, serverAddress, serverPort);
+		
+		//Record time, launch threads and print results, record elapsed time
+		//long initialTime = System.currentTimeMillis();
+		for(CommandThread thread : commandThreads)
+			thread.start();
+		
+		//totalTurnAroundTime = 0;						//make sure the totalTurnAroundTime is 0
+		for(CommandThread thread : commandThreads) {
+			try {
+				thread.join();							//end the threads
+			} catch (InterruptedException e) {
+				System.out.println("Could not rejoin thread");
+				e.printStackTrace();
+			}
+			pen.write(thread.getTurnAroundTime() + ", ");							//Write turn around time to file
+			
+			//System.out.print(thread.getCommandResults());							//Print Thread Results
+			//System.out.println("[test] Turn Around Time: " + thread.getTurnAroundTime() + " ms.");	//Show the correct turn Around Time
+			//totalTurnAroundTime += thread.getTurnAroundTime();						//Get the totalTurnAroudnTime
+			}
+		//pen.write(totalTurnAroundTime);
+		//System.out.println("Total Turn Around Time: " + totalTurnAroundTime);
+		//System.out.println("Average Turn Around Time: " + (totalTurnAroundTime / numThread) + " ms.");
+	}
 
 }//end class Client
